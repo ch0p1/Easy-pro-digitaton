@@ -42,7 +42,7 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({
           {isCorrect ? (
             <div className="flex items-center gap-2 text-[#1E824C] font-bold text-lg">
               <CheckCircle2 className="w-6 h-6 text-[#1E824C]" aria-hidden="true" />
-              <span>¡Respuesta Correcta! (+20 XP)</span>
+              <span>¡Respuesta Correcta!</span>
             </div>
           ) : (
             <div className="flex items-center gap-2 text-[#BA0F23] font-bold text-lg">

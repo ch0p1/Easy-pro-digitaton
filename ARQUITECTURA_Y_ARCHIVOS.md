@@ -43,7 +43,7 @@ Este documento técnico detalla la estructura completa de archivos del proyecto 
     │   └── scormGenerator.ts            # Generador dinámico de paquetes SCORM 1.2 (.zip)
     │
     └── components/
-        ├── Navbar.tsx                   # Barra de navegación tipográfica editorial y accesible
+        ├── Navbar.tsx                   # Barra de navegación adaptable (tabs en escritorio, menú hamburguesa accesible en celular)
         ├── MathView.tsx                 # Renderizador de fórmulas matemáticas KaTeX
         │
         ├── Home/

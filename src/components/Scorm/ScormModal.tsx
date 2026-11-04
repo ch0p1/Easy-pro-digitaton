@@ -17,10 +17,10 @@ import {
 
 interface ScormModalProps {
   onClose: () => void;
-  completionPercentage: number;
+  completionPercentage?: number;
 }
 
-export const ScormModal: React.FC<ScormModalProps> = ({ onClose, completionPercentage }) => {
+export const ScormModal: React.FC<ScormModalProps> = ({ onClose, completionPercentage = 100 }) => {
   const [lmsInfo, setLmsInfo] = useState<ScormLmsInfo>(scorm12.getLmsInfo());
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const [showManifestCode, setShowManifestCode] = useState<boolean>(false);

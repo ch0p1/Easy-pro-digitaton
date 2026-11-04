@@ -2,36 +2,21 @@ import React from 'react';
 import { MainViewTab } from '../Navbar';
 import {
   Compass,
-  Calculator,
   BookOpen,
-  GraduationCap,
-  Award,
-  Layers,
   ArrowRight,
   CheckCircle2,
-  HelpCircle,
-  Sparkles,
-  Flame,
-  Zap,
-  Target,
-  FileText,
-  RotateCcw,
 } from 'lucide-react';
 
 interface HomeViewProps {
   onNavigate: (tab: MainViewTab) => void;
   onOpenDecisionTree: () => void;
-  onOpenScormModal: () => void;
-  xp: number;
-  rachaDias: number;
+  onOpenScormModal?: () => void;
 }
 
 export const HomeView: React.FC<HomeViewProps> = ({
   onNavigate,
   onOpenDecisionTree,
   onOpenScormModal,
-  xp,
-  rachaDias,
 }) => {
   const modules = [
     {
@@ -100,22 +85,6 @@ export const HomeView: React.FC<HomeViewProps> = ({
       action: () => onNavigate('formulas'),
       tag: 'Fichas y Notación Devore',
     },
-    {
-      id: 'progress' as MainViewTab,
-      numero: '05',
-      title: 'Progreso y Repaso del Día',
-      subtitle: 'Analítica personal, racha, XP y banco de reforzamiento',
-      description:
-        'Monitorea tu dominio temático a lo largo de las semanas. Los ejercicios que falles durante la práctica se guardan automáticamente en tu bandeja de repaso para que vuelvas a intentar resolverlos antes de los parciales.',
-      features: [
-        'Repaso del día: banco activo de errores clasificados por confusión',
-        'Medallero de maestría por cada uno de los 8 temas completados',
-        'Exportación e importación completa del avance en formato JSON',
-      ],
-      cta: 'Ver Mi Progreso',
-      action: () => onNavigate('progress'),
-      tag: 'Gestión del Aprendizaje',
-    },
   ];
 
   const tools = [
@@ -127,11 +96,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
       icon: Compass,
     },
     {
-      title: 'Compatibilidad SCORM 1.2 (Moodle/Canvas)',
-      desc: 'Exporta el curso en un paquete .zip estandarizado con imsmanifest.xml para subirlo a tu aula virtual universitaria.',
-      btn: 'Descargar SCORM',
-      action: onOpenScormModal,
-      icon: GraduationCap,
+      title: 'Formulario y Reglas de Aproximación',
+      desc: 'Consulta las condiciones formales de aproximación del curso y genera fichas técnicas de modelos listas para estudiar.',
+      btn: 'Ver Formulario',
+      action: () => onNavigate('formulas'),
+      icon: BookOpen,
     },
   ];
 

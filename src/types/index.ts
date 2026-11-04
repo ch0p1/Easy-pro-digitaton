@@ -136,10 +136,5 @@ export interface AppState {
   version: number;
   temas: Record<TopicId, UserTopicProgress>;
   errores: RecordedError[];
-  xp: number;
-  racha: {
-    dias: number;
-    ultimaFecha: string | null;
-  };
   sonidosHabilitados: boolean;
 }

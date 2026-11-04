@@ -7,7 +7,7 @@ interface ActiveStageRunnerProps {
   topic: TopicData;
   stageId: StageId;
   onBackToRoadmap: () => void;
-  onStageFinished: (isSuccess: boolean, earnedXp: number) => void;
+  onStageFinished: (isSuccess: boolean) => void;
   onOpenVideo?: () => void;
   onOpenCalculator?: () => void;
 }
@@ -50,7 +50,7 @@ export const ActiveStageRunner: React.FC<ActiveStageRunnerProps> = ({
       setCurrentIndex((prev) => prev + 1);
     } else {
       setStageFinished(true);
-      onStageFinished(true, 25);
+      onStageFinished(true);
     }
   };
 
@@ -115,9 +115,6 @@ export const ActiveStageRunner: React.FC<ActiveStageRunnerProps> = ({
             <p className="text-sm text-[#584141] mt-1">
               Has demostrado el criterio de decisión requerido para esta etapa.
             </p>
-          </div>
-          <div className="p-3 bg-[#FBF5EC] rounded-xl border border-[#8A142815] inline-block font-mono text-sm text-[#8A1428] font-bold">
-            +25 XP ganados para tu progreso
           </div>
           <div>
             <button

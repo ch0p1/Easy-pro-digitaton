@@ -5,13 +5,12 @@ import { ExerciseCard } from './ExerciseCard';
 import { Target, X, Shuffle, CheckCircle, RotateCcw } from 'lucide-react';
 
 interface QuickDrillModalProps {
-  unlockedCheck: (t: TopicId) => boolean;
+  unlockedCheck?: (t: TopicId) => boolean;
   onClose: () => void;
   onOpenCalculator?: () => void;
 }
 
 export const QuickDrillModal: React.FC<QuickDrillModalProps> = ({
-  unlockedCheck,
   onClose,
   onOpenCalculator,
 }) => {

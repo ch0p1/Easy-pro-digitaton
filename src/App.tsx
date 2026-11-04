@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAppStore } from './store/useStore';
 import { TOPICS_DATA } from './data/topics';
-import { TopicId, StageId, TopicData, RecordedError } from './types';
+import { TopicId, StageId, TopicData } from './types';
 import { Navbar, MainViewTab } from './components/Navbar';
 import { TopicRoadmap } from './components/Playground/TopicRoadmap';
 import { ActiveStageRunner } from './components/Playground/ActiveStageRunner';
@@ -11,24 +11,12 @@ import { DecisionTreeModal } from './components/DecisionTree/DecisionTreeModal';
 import { DistributionCalculator } from './components/Calculator/DistributionCalculator';
 import { LibraryView } from './components/Library/LibraryView';
 import { FormulasView } from './components/Formulas/FormulasView';
-import { ProgressView } from './components/Progress/ProgressView';
 import { HomeView } from './components/Home/HomeView';
 import { ScormModal } from './components/Scorm/ScormModal';
-import { BookOpen, GraduationCap, Heart, HelpCircle, Layers } from 'lucide-react';
 
 export default function App() {
   const {
-    state,
-    completionPercentage,
-    addXP,
     recordStageCompletion,
-    recordError,
-    clearResolvedError,
-    isTopicUnlocked,
-    isStageUnlocked,
-    exportStateJSON,
-    importStateJSON,
-    resetAllProgress,
   } = useAppStore();
 
   const [currentTab, setCurrentTab] = useState<MainViewTab>('home');
@@ -38,37 +26,31 @@ export default function App() {
   const [pistasTopic, setPistasTopic] = useState<TopicData | null>(null);
   const [showDecisionTree, setShowDecisionTree] = useState<boolean>(false);
   const [showQuickDrill, setShowQuickDrill] = useState<boolean>(false);
-  const [showScormModal, setShowScormModal] = useState<boolean>(false);
   const [calculatorSelectedTopic, setCalculatorSelectedTopic] = useState<TopicId>('binomial');
+  const [showScormModal, setShowScormModal] = useState<boolean>(false);
 
+  // Stage activation
   const handleStartStage = (topicId: TopicId, stageId: StageId) => {
-    const topic = TOPICS_DATA.find((t) => t.id === topicId);
-    if (!topic) return;
-
     if (stageId === 'pistas') {
-      // Open reading modal for stage 1
-      setPistasTopic(topic);
-    } else {
-      setActiveStage({ topicId, stageId });
+      const topic = TOPICS_DATA.find((t) => t.id === topicId);
+      if (topic) {
+        setPistasTopic(topic);
+      }
+      return;
     }
+    setActiveStage({ topicId, stageId });
   };
 
   const handlePistasContinue = () => {
     if (!pistasTopic) return;
-    recordStageCompletion(pistasTopic.id, 'pistas', true, 10);
     const targetTopicId = pistasTopic.id;
     setPistasTopic(null);
     setActiveStage({ topicId: targetTopicId, stageId: 'reconocer' });
   };
 
-  const handleStageFinished = (isSuccess: boolean, earnedXp: number) => {
+  const handleStageFinished = (isSuccess: boolean) => {
     if (!activeStage) return;
-    recordStageCompletion(activeStage.topicId, activeStage.stageId, isSuccess, earnedXp);
-  };
-
-  const handleStartReviewExercise = (error: RecordedError) => {
-    setActiveStage({ topicId: error.tema, stageId: error.etapa });
-    setCurrentTab('playground');
+    recordStageCompletion(activeStage.topicId, activeStage.stageId, isSuccess);
   };
 
   const activeTopicData = activeStage
@@ -94,9 +76,6 @@ export default function App() {
             setActiveStage(null);
           }
         }}
-        xp={state.xp}
-        rachaDias={state.racha.dias}
-        onOpenScormModal={() => setShowScormModal(true)}
       />
 
       {/* Main Container Landmark with target id */}
@@ -112,8 +91,6 @@ export default function App() {
             }}
             onOpenDecisionTree={() => setShowDecisionTree(true)}
             onOpenScormModal={() => setShowScormModal(true)}
-            xp={state.xp}
-            rachaDias={state.racha.dias}
           />
         )}
 
@@ -122,9 +99,6 @@ export default function App() {
           <>
             {!activeStage ? (
               <TopicRoadmap
-                unlockedCheck={isTopicUnlocked}
-                stageUnlockedCheck={isStageUnlocked}
-                userTopicsState={state.temas}
                 onStartStage={handleStartStage}
                 onOpenDecisionTree={() => setShowDecisionTree(true)}
                 onOpenQuickDrill={() => setShowQuickDrill(true)}
@@ -161,18 +135,6 @@ export default function App() {
 
         {/* TAB 4: FORMULAS */}
         {currentTab === 'formulas' && <FormulasView />}
-
-        {/* TAB 5: PROGRESS */}
-        {currentTab === 'progress' && (
-          <ProgressView
-            state={state}
-            onExport={exportStateJSON}
-            onImport={importStateJSON}
-            onReset={resetAllProgress}
-            onStartReviewExercise={handleStartReviewExercise}
-            onOpenScormModal={() => setShowScormModal(true)}
-          />
-        )}
       </main>
 
       {/* Stage 1: Pistas & Signals Reader Modal */}
@@ -188,21 +150,22 @@ export default function App() {
       {showDecisionTree && (
         <DecisionTreeModal
           onClose={() => setShowDecisionTree(false)}
-          onSelectTopic={(topicId) => {
-            setCurrentTab('playground');
-            setActiveStage({ topicId, stageId: 'reconocer' });
-          }}
-          onOpenCalculator={(topicId) => {
-            setCalculatorSelectedTopic(topicId);
+          onOpenCalculator={(topic) => {
+            setCalculatorSelectedTopic(topic);
+            setShowDecisionTree(false);
             setCurrentTab('calculator');
+          }}
+          onGoToRoadmap={(topic) => {
+            setShowDecisionTree(false);
+            setCurrentTab('playground');
+            setActiveStage({ topicId: topic, stageId: 'pistas' });
           }}
         />
       )}
 
-      {/* Quick Drill / Modo Reconocer Modal */}
+      {/* Quick Drill Practice Modal */}
       {showQuickDrill && (
         <QuickDrillModal
-          unlockedCheck={isTopicUnlocked}
           onClose={() => setShowQuickDrill(false)}
           onOpenCalculator={() => {
             setShowQuickDrill(false);
@@ -215,7 +178,6 @@ export default function App() {
       {showScormModal && (
         <ScormModal
           onClose={() => setShowScormModal(false)}
-          completionPercentage={completionPercentage}
         />
       )}
 
@@ -233,13 +195,6 @@ export default function App() {
               className="hover:underline font-semibold"
             >
               Inicio
-            </button>
-            <button
-              onClick={() => setShowScormModal(true)}
-              className="hover:underline font-bold text-[#AC0B32] flex items-center gap-1"
-            >
-              <GraduationCap className="w-3.5 h-3.5" />
-              <span>Paquete SCORM 1.2</span>
             </button>
             <button
               onClick={() => setShowDecisionTree(true)}
