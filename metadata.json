@@ -1,0 +1,6 @@
+{
+  "name": "Easy Pro: Probabilidad y Estadística",
+  "description": "Entrena el reconocimiento y selección de modelos de probabilidad según el temario de Devore con práctica de 5 etapas, árbol de decisión y calculadora integrada.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

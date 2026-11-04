@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  Manifiesto Oficial SCORM 1.2 - Easy Pro: Probabilidad y Estadística
+  Texto Guía: Devore, Probabilidad y Estadística para Ingeniería y Ciencias
+-->
+<manifest identifier="easy_pro_probabilidad_scorm12" version="1.2"
+  xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2"
+  xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_rootv1p2"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.imsproject.org/xsd/imscp_rootv1p1p2 imscp_rootv1p1p2.xsd
+                      http://www.adlnet.org/xsd/adlcp_rootv1p2 adlcp_rootv1p2.xsd">
+  <metadata>
+    <schema>ADL SCORM</schema>
+    <schemaversion>1.2</schemaversion>
+  </metadata>
+  <organizations default="EASY_PRO_COURSE_ORG">
+    <organization identifier="EASY_PRO_COURSE_ORG">
+      <title>Easy Pro: Probabilidad y Estadística (Devore)</title>
+      <item identifier="ITEM_EASY_PRO_MAIN" identifierref="RES_EASY_PRO_APP">
+        <title>Easy Pro - Entrena el Reconocimiento de Modelos y Distribuciones</title>
+        <adlcp:masteryscore>80</adlcp:masteryscore>
+        <adlcp:datafromlms></adlcp:datafromlms>
+      </item>
+    </organization>
+  </organizations>
+  <resources>
+    <resource identifier="RES_EASY_PRO_APP" type="webcontent" adlcp:scormtype="sco" href="index.html">
+      <file href="index.html"/>
+    </resource>
+  </resources>
+</manifest>

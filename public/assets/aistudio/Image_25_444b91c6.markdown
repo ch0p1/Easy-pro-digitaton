@@ -1,0 +1,234 @@
+---
+name: Warm Academic Editorial
+colors:
+  surface: '#fff9ef'
+  surface-dim: '#dfd9d1'
+  surface-bright: '#fff9ef'
+  surface-container-lowest: '#ffffff'
+  surface-container-low: '#f9f3ea'
+  surface-container: '#f3ede4'
+  surface-container-high: '#ede7df'
+  surface-container-highest: '#e7e2d9'
+  on-surface: '#1d1b16'
+  on-surface-variant: '#584141'
+  inverse-surface: '#32302a'
+  inverse-on-surface: '#f6f0e7'
+  outline: '#8b7171'
+  outline-variant: '#dfbfbf'
+  surface-tint: '#ac303e'
+  primary: '#660017'
+  on-primary: '#ffffff'
+  primary-container: '#8a1428'
+  on-primary-container: '#ff969a'
+  inverse-primary: '#ffb3b4'
+  secondary: '#b8193a'
+  on-secondary: '#ffffff'
+  secondary-container: '#ff5167'
+  on-secondary-container: '#5b0015'
+  tertiary: '#670005'
+  on-tertiary: '#ffffff'
+  tertiary-container: '#91000b'
+  on-tertiary-container: '#ff978c'
+  error: '#ba1a1a'
+  on-error: '#ffffff'
+  error-container: '#ffdad6'
+  on-error-container: '#93000a'
+  primary-fixed: '#ffdada'
+  primary-fixed-dim: '#ffb3b4'
+  on-primary-fixed: '#40000b'
+  on-primary-fixed-variant: '#8b1529'
+  secondary-fixed: '#ffdada'
+  secondary-fixed-dim: '#ffb3b6'
+  on-secondary-fixed: '#40000c'
+  on-secondary-fixed-variant: '#920027'
+  tertiary-fixed: '#ffdad6'
+  tertiary-fixed-dim: '#ffb4ab'
+  on-tertiary-fixed: '#410002'
+  on-tertiary-fixed-variant: '#93000b'
+  background: '#fff9ef'
+  on-background: '#1d1b16'
+  surface-variant: '#e7e2d9'
+typography:
+  headline-xl:
+    fontFamily: Space Grotesk
+    fontSize: 40px
+    fontWeight: '700'
+    lineHeight: 48px
+    letterSpacing: -0.03em
+  headline-xl-mobile:
+    fontFamily: Space Grotesk
+    fontSize: 30px
+    fontWeight: '700'
+    lineHeight: 38px
+    letterSpacing: -0.02em
+  headline-lg:
+    fontFamily: Space Grotesk
+    fontSize: 32px
+    fontWeight: '700'
+    lineHeight: 40px
+    letterSpacing: -0.02em
+  headline-lg-mobile:
+    fontFamily: Space Grotesk
+    fontSize: 24px
+    fontWeight: '600'
+    lineHeight: 32px
+    letterSpacing: -0.01em
+  headline-md:
+    fontFamily: Space Grotesk
+    fontSize: 24px
+    fontWeight: '600'
+    lineHeight: 32px
+    letterSpacing: -0.01em
+  headline-sm:
+    fontFamily: Space Grotesk
+    fontSize: 20px
+    fontWeight: '600'
+    lineHeight: 28px
+    letterSpacing: 0em
+  body-lg:
+    fontFamily: Space Grotesk
+    fontSize: 18px
+    fontWeight: '400'
+    lineHeight: 28px
+    letterSpacing: 0em
+  body-md:
+    fontFamily: Space Grotesk
+    fontSize: 15px
+    fontWeight: '400'
+    lineHeight: 24px
+    letterSpacing: 0em
+  body-sm:
+    fontFamily: Space Grotesk
+    fontSize: 13px
+    fontWeight: '400'
+    lineHeight: 20px
+    letterSpacing: 0.01em
+  label-lg:
+    fontFamily: Space Grotesk
+    fontSize: 14px
+    fontWeight: '600'
+    lineHeight: 20px
+    letterSpacing: 0.02em
+  label-md:
+    fontFamily: Space Grotesk
+    fontSize: 12px
+    fontWeight: '500'
+    lineHeight: 16px
+    letterSpacing: 0.04em
+  label-sm:
+    fontFamily: Space Grotesk
+    fontSize: 11px
+    fontWeight: '500'
+    lineHeight: 14px
+    letterSpacing: 0.05em
+rounded:
+  sm: 0.25rem
+  DEFAULT: 0.5rem
+  md: 0.75rem
+  lg: 1rem
+  xl: 1.5rem
+  full: 9999px
+spacing:
+  gutter: 1.25rem
+  gutter-mobile: 0.75rem
+  margin: 2rem
+  margin-mobile: 1rem
+  space-xs: 0.25rem
+  space-sm: 0.5rem
+  space-md: 1rem
+  space-lg: 1.5rem
+  space-xl: 2.5rem
+---
+
+## Brand & Style
+
+This design system crafts an academic yet warmly approachable environment tailored for higher education in probability and statistics. It departs completely from cold, sterile dashboard aesthetics and stark black-and-white polarities, establishing an inviting, tactile editorial atmosphere inspired by high-end mathematical journals, warm vellum parchment, and contemporary gamified learning platforms.
+
+### Target Audience & Emotional Intent
+Designed for university students, self-taught data practitioners, and researchers navigating complex conceptual models. The experience is calibrated to reduce cognitive fatigue, soothe math-induced friction, and project academic rigour alongside encouraging pedagogical feedback.
+
+### Aesthetic Movement
+The visual language merges **Modern Editorial Print** with **Refined Tactile Product Design**. It balances structured modularity with warm paper tones, rhythmic margins, and vibrant interactive moments reminiscent of tactile achievement tokens.
+
+## Colors
+
+The palette executes a rigorous 60-30-10 chromatic distribution to maintain visual calmness across long problem-solving and proof-reading sessions:
+
+### 60% Dominant (Canvas & Surfaces)
+- **Base Canvas (`#FBF5EC`):** A soft, warm ivory tone that eliminates the harsh glare of standard displays, evoking high-grade archival book paper.
+- **Surface Elevation (`#FFFFFF`):** Pure crisp white reserved for functional containers, problem modules, calculation pads, and interactive cards to introduce natural hierarchy over the ivory background.
+
+### 30% Structural & Content (Deep Wine & Crimson Burgundy)
+- **Primary Structural (`#8A1428`):** Deep, velvety burgundy used for primary titles, deep mathematical typography (LaTeX expressions), structural strokes, and navigational frames.
+- **Secondary Structural (`#AC0B32`):** Medium burgundy for secondary headers, sublabels, inactive input borders, and formula annotation callouts.
+- **Muted Structural Tint (`#8A14281A` / 10% opacity):** Applied to grid dividing rules, subtle inset borders, and math bracket guides. Pure black (`#000000`) is strictly prohibited throughout the entire interface.
+
+### 10% Focal Accents (Active Kinetic Highlights)
+- **Primary Accent (`#FF051E`):** Pure crimson, reserved strictly for focal actions: primary submission CTAs, "Check Solution" triggers, and critical state indicators.
+- **Supportive Gamification Accent (`#FF836C`):** Warm coral used to soften progress streaks, mastery badges, active step bullets, and celebratory micro-interactions without causing visual tension.
+
+## Typography
+
+Space Grotesk anchors the system with an authentic technical voice. Its idiosyncratic proportions, balanced x-height, and precise mathematical symbols bridge traditional technical literature with modern educational interfaces.
+
+### Application Rules
+- **Formulas and LaTeX Blocks:** Rendered using the primary structural color (`#8A1428`) within `body-lg` or dedicated computational blocks. Mathematical notations receive relaxed tracking to preserve character spacing.
+- **Hierarchical Contrast:** Titles leverage tighter negative tracking (`-0.02em` to `-0.03em`) to mimic crafted editorial titling, while micro-labels and step counters employ open tracking (`0.02em` to `0.05em`) to ensure legibility across small cards.
+- **Readability & Weight Distribution:** Dense descriptive theorem text stays on `body-md` (Regular 400). Interactive labels and formula premises use Medium (500) and SemiBold (600) to keep structural hierarchy clear without introducing heavy weights.
+
+## Layout & Spacing
+
+The layout is built on a responsive 12-column grid for desktop environments (scaling to a 4-column system on mobile devices), emphasizing focused, reading-first single-column streams for calculations and modular two-column views for problem-and-graph workspaces.
+
+### Rhythm Principles
+- **Adaptive Canvas:** Desktop screens clamp main exercise flows to a maximum reading width of 840px, centering mathematical derivations while keeping interactive probability sandbox controls within immediate reach.
+- **Mathematical Step Pacing:** Vertical gaps between consecutive algebraic derivations adhere strictly to `space-md`, while thematic breaks between problem statements, calculation blocks, and solution validation use `space-xl`.
+
+## Elevation & Depth
+
+This system avoids dark, heavy synthetic drop shadows in favor of **Tonal Paper Stacking** and **Warm Ambient Illumination**. Depth communicates interactive readiness rather than physical distance.
+
+### Depth Mechanics
+- **Base Canvas:** `#FBF5EC` acts as the zero-elevation backdrop.
+- **Tonal Layer 1 (Surface Cards):** Crisp `#FFFFFF` containers resting over `#FBF5EC`, framed with an ultra-fine, translucent structural outline (`1px solid rgba(138, 20, 40, 0.12)`). No shadow is required here; the contrast between warm cream and white produces crisp, quiet separation.
+- **Tonal Layer 2 (Floating Modals & Interactive Steps):** Elevated `#FFFFFF` surfaces rely on a warm-tinted shadow (`0 8px 24px -4px rgba(138, 20, 40, 0.08)`), introducing a subtle crimson-undertone ambient glow instead of a sterile gray drop shadow.
+- **Gamified Feedback Layer:** Solution check bars and interactive tokens adopt subtle bottom borders (2px to 3px solid `#8A142826`) to introduce a friendly, tactile push-button quality without resorting to skeuomorphic clunkiness.
+
+## Shapes
+
+The design uses a balanced `roundedness: 2` (0.5rem base radius) to introduce a soft, human feel that reduces the perceived intimidation of mathematical statistics.
+
+### Geometry Guidelines
+- **Input Fields & Small Cells:** Styled with `0.5rem` (`rounded`) corners, creating stable, clean rectangular rhythm across matrix tables, probability formulas, and continuous number inputs.
+- **Cards & Working Panels:** Use `1rem` (`rounded-lg`) to visually frame problem sets and interactive distribution graphs with approachable warmth.
+- **Pills & Achievement Badges:** Streak badges, module tags, and completion meters take fully rounded pill shapes (`9999px`) to maintain a lively gamified feel within the academic framework.
+
+## Components
+
+### Buttons
+- **Primary ("Comprobar Respuesta" / "Continuar"):** Solid `#FF051E` background, `#FFFFFF` text, `0.75rem` vertical padding, with a subtly darker baseline border (`#D00016`) for tactile feedback. Hover transitions into `#E00017`.
+- **Secondary (Step Reveal / Hint):** Transparent base with a 1.5px structural border in `#8A1428`, `#8A1428` text, transitioning to `#8A14280F` background tint on hover.
+- **Ghost:** `#8A1428` text with zero border; activates with a warm background wash (`#FBF5EC`) on press.
+
+### Cards & Problem Containers
+- Built on `#FFFFFF` surfaces with subtle `1px solid rgba(138, 20, 40, 0.12)` borders.
+- Header titles are set in `headline-sm` with `#8A1428`. Subtext and contextual problem assumptions stay in `body-md` using `#8A1428` at 85% opacity.
+
+### Interactive Form Inputs & Numeric Step Fields
+- **Default State:** `#FFFFFF` background, `1.5px solid rgba(138, 20, 40, 0.2)` border, and `#8A1428` text.
+- **Focus State:** Border shifts to `#AC0B32`, supported by a soft halo (`0 0 0 3px rgba(172, 11, 50, 0.12)`).
+- **Correct Submission:** Border shifts to an organic sage emerald, paired with a celebratory micro-badge in `#FF836C`.
+- **Incorrect Submission:** Border shifts to `#FF051E`, opening an immediate ivory-tinted explanation drawer below.
+
+### Chips & Variable Selectors
+- Compact interactive selectors for statistical variables (e.g., $\mu$, $\sigma^2$, $p$-value).
+- **Unselected:** Warm ivory background (`#FBF5EC`), border `1px solid rgba(138, 20, 40, 0.15)`, `#8A1428` text.
+- **Selected:** `#8A1428` background, `#FFFFFF` text, accompanied by smooth scale feedback.
+
+### Progress Meters & Gamified Elements
+- **Daily Streak & Mastery Badges:** Rendered with warm coral accents (`#FF836C`) and clean ivory backing, highlighting numerical achievements without disrupting the academic tone.
+- **Progress Track:** Subdued ivory-burgundy track (`rgba(138, 20, 40, 0.08)`) filled with a vibrant `#FF051E` indicator bar, rounded on both ends.
+
+### Formulas & Math Blocks
+- Standalone equation displays sit on an elevated `#FFFFFF` card, framed by a soft vertical accent line (3px solid `#AC0B32`) along the left edge.
+- Mathematical notation is rendered in `#8A1428`, maintaining clear contrast against the pure white surface.
