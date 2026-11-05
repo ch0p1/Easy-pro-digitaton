@@ -51,7 +51,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-[#FFFFFFEE] backdrop-blur-md border-b border-[#8A142818] transition-colors">
+    <header className="sticky top-0 z-40 bg-[#FBF5ECF0] backdrop-blur-md border-b border-transparent transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
         {/* Mobile Hamburger Button (visible on mobile only: md:hidden) */}
         <div className="flex items-center gap-3 md:hidden">
@@ -126,7 +126,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             role="dialog"
             aria-modal="true"
             aria-label="Menú de navegación móvil"
-            className="md:hidden fixed top-16 left-0 right-0 z-50 bg-[#FFFFFF] border-b-2 border-[#8A142825] shadow-2xl max-h-[calc(100vh-4.5rem)] overflow-y-auto animate-in slide-in-from-top-2 duration-150"
+            className="md:hidden fixed top-16 left-0 right-0 z-50 bg-[#FFFFFF] border-b-2 border-[#8A142825] shadow-2xl max-h-[calc(100vh-4.5rem)] overflow-y-auto no-scrollbar animate-in slide-in-from-top-2 duration-150"
           >
             <div className="flex flex-col py-2 px-3 divide-y divide-[#8A142810]">
               {navItems.map((item) => {

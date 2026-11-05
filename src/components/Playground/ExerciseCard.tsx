@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import confetti from 'canvas-confetti';
 import { Exercise, StageId, TopicId } from '../../types';
 import { FeedbackDrawer } from './FeedbackDrawer';
 import { MathView } from '../MathView';
+import { shuffledOrder } from '../../utils/shuffle';
 import { HelpCircle, Sparkles, Check, Send } from 'lucide-react';
 
 interface ExerciseCardProps {
@@ -22,6 +23,15 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
 }) => {
   // Option multiple & detecta error state
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
+
+  // Orden de presentación de las opciones (índices originales). Se mezcla una vez por ejercicio
+  // para que la posición de la respuesta correcta no sea predecible. `selectedOption`, `correcta`
+  // y `error_comun` siguen usando el índice original.
+  const optionOrder = useMemo(
+    () => shuffledOrder(exercise.opciones?.length ?? 0),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [exercise.id]
+  );
 
   // Numeric state
   const [numericInput, setNumericInput] = useState<string>('');
@@ -146,7 +156,8 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
               <legend className="sr-only">
                 Opciones de respuesta para el ejercicio: {exercise.enunciado}
               </legend>
-              {exercise.opciones.map((opcion, idx) => {
+              {optionOrder.map((idx, pos) => {
+                const opcion = exercise.opciones![idx];
                 const isSelected = selectedOption === idx;
                 let optionStyle =
                   'bg-white border-[#8A142825] text-[#1d1b16] hover:bg-[#FBF5EC] hover:border-[#8A142840]';
@@ -183,7 +194,7 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
                             : 'bg-[#8A142815] text-[#8A1428]'
                         }`}
                       >
-                        {String.fromCharCode(65 + idx)}
+                        {String.fromCharCode(65 + pos)}
                       </span>
                       <span className="leading-snug">{opcion}</span>
                     </div>

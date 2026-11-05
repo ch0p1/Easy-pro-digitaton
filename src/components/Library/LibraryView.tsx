@@ -89,7 +89,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({ initialTopic = 'binomi
       </div>
 
       {/* Topic Horizontal Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-[#8A14281A]">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-transparent no-scrollbar">
         {[
           { id: 'binomial', label: '1. Binomial' },
           { id: 'hipergeometrica', label: '2. Hipergeométrica' },

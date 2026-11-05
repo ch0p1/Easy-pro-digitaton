@@ -34,6 +34,34 @@
     outline: 2.5px solid #8A1428 !important;
     outline-offset: 2.5px !important;
   }
+
+  /* Barras de navegación / desplazamiento invisibles para todas las plataformas */
+  html,
+  body,
+  * {
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* IE y Edge clásico */
+  }
+
+  *::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari, Opera, Edge basado en Chromium, iOS, Android */
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+  }
+}
+
+/* Utilidad explícita para contenedores de navegación */
+.no-scrollbar {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
 }
 
 /* WCAG 2.2 Principle 2.2 (Enough Time) & 2.3.3 (Animation from Interactions / Reduced Motion) */

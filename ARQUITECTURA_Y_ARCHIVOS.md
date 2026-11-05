@@ -58,7 +58,7 @@ Este documento técnico detalla la estructura completa de archivos del proyecto 
         │   └── QuickDrillModal.tsx      # Modal de práctica rápida de reconocimiento (5-10 min)
         │
         ├── Calculator/
-        │   └── DistributionCalculator.tsx # Calculadora estadística con gráficos SVG y banco verificado
+        │   └── DistributionCalculator.tsx # Calculadora estadística interactiva con gráficos SVG
         │
         ├── Library/
         │   └── LibraryView.tsx          # Biblioteca multimedia con soporte sin conexión (offline)
@@ -116,6 +116,9 @@ Este documento técnico detalla la estructura completa de archivos del proyecto 
 | Archivo | Ubicación | Propósito y Función |
 | :--- | :--- | :--- |
 | `src/scorm/scorm12.ts` | `/src/scorm/scorm12.ts` | Conector oficial de SCORM 1.2. Busca recursivamente el objeto `window.API` en ventanas padre y emergentes. Ejecuta `LMSInitialize`, `LMSGetValue`, `LMSSetValue`, `LMSCommit` y `LMSFinish`. Sincroniza nota `cmi.core.score.raw` (0-100), estado `cmi.core.lesson_status` (`passed` al alcanzar el 80% de maestría), tiempo de sesión y datos de reanudación `cmi.suspend_data`. Incluye un simulador LMS integrado para pruebas fuera de Moodle. |
+| `src/scorm/progress.ts` | `/src/scorm/progress.ts` | Orden fijo de temas y etapas, porcentaje real de avance (etapas calificables aprobadas ÷ 32) y codificación compacta de `cmi.suspend_data` (~50 caracteres; el límite de SCORM 1.2 es 4096). Los errores y contadores de intentos viven solo en `localStorage`. |
+| `src/progress/rules.ts` | `/src/progress/rules.ts` | Reglas puras de desbloqueo secuencial: un tema se abre cuando **todos** los anteriores están completados; dentro del tema, cada etapa se abre al aprobar la anterior (reconocer → parámetros → calcular → contrastar). «Pistas» es lectura y siempre está disponible en un tema abierto. |
+| `src/utils/shuffle.ts` | `/src/utils/shuffle.ts` | Mezcla Fisher-Yates. Se usa para barajar la posición de las opciones en cada ejercicio (los índices `correcta` y `error_comun` de los datos no cambian). |
 | `src/scorm/scormGenerator.ts` | `/src/scorm/scormGenerator.ts` | Generador dinámico con `JSZip`. Construye en memoria el archivo `imsmanifest.xml` con esquemas IMS y LOM, la guía de instalación para profesores `LEEME_INSTALACION_LMS.md`, el cargador SCO y descarga el paquete `.zip` listo para importar en Moodle. |
 
 ---
@@ -127,13 +130,13 @@ Este documento técnico detalla la estructura completa de archivos del proyecto 
 | `src/components/Navbar.tsx` | `/src/components/Navbar.tsx` | Barra de navegación superior accesible con rol semántico `<nav aria-label="Navegación principal">`. Presenta pestañas tipográficas sin iconos distractores, subrayado de tinta activo para el elemento actual, métricas tabulares de racha y XP, y disparador del modal SCORM 1.2. |
 | `src/components/MathView.tsx` | `/src/components/MathView.tsx` | Componente seguro para renderizar fórmulas KaTeX en modo inline o bloque con degradación elegante si la biblioteca externa falla. |
 | `src/components/Home/HomeView.tsx` | `/src/components/Home/HomeView.tsx` | Página de bienvenida del sistema. Explica en detalle el objetivo del proyecto, el contenido y función de cada uno de los 5 módulos principales, el desglose de las 5 etapas por tema, los accesos directos de navegación y la matriz de los 8 temas de Devore. |
-| `src/components/Playground/TopicRoadmap.tsx` | `/src/components/Playground/TopicRoadmap.tsx` | Vista del mapa de ruta de aprendizaje. Muestra los 8 temas secuenciales con indicadores de estado (bloqueado, en progreso, completado), progreso de etapas aprobadas y desglose de las 5 etapas interactivas. |
+| `src/components/Playground/TopicRoadmap.tsx` | `/src/components/Playground/TopicRoadmap.tsx` | Vista del mapa de ruta de aprendizaje. Muestra los 8 temas secuenciales con indicadores de estado (bloqueado, disponible, en curso, completado), barra de avance del curso y por tema, y las 5 etapas con candado hasta aprobar la anterior (texto + icono, no solo color). Recibe `progress` desde `App`. |
 | `src/components/Playground/ExerciseCard.tsx` | `/src/components/Playground/ExerciseCard.tsx` | Motor de renderizado accesible para los 5 tipos de ejercicios. Incluye agrupación en `<fieldset>` y `<legend>`, botones de opción con roles semánticos, campos numéricos con etiquetas asociadas mediante `id`/`htmlFor`, descripciones `aria-describedby` y región activa `aria-live="polite"` para anunciar aciertos y errores a tecnologías de asistencia. |
 | `src/components/Playground/FeedbackDrawer.tsx` | `/src/components/Playground/FeedbackDrawer.tsx` | Cajón de retroalimentación pedagógica con atributo `role="alert"`. Resalta las frases determinantes del enunciado, explica el fundamento pedagógico del modelo, advierte sobre trampas de parcial y recomienda videos si hay fallos recurrentes. |
 | `src/components/Playground/ActiveStageRunner.tsx` | `/src/components/Playground/ActiveStageRunner.tsx` | Controlador de flujo para resolver los ejercicios dentro de una etapa activa, con barra de progreso y pantalla de felicitación al aprobar. |
 | `src/components/Playground/PistasReaderModal.tsx` | `/src/components/Playground/PistasReaderModal.tsx` | Modal accesible (`role="dialog"`, captura de tecla `Escape`) para la lectura formativa de la Etapa 1 (Pistas, señales determinantes y contraejemplos). |
 | `src/components/Playground/QuickDrillModal.tsx` | `/src/components/Playground/QuickDrillModal.tsx` | Modal accesible de práctica rápida de reconocimiento (5 a 10 minutos) con enunciados mezclados de temas desbloqueados sin alterar el progreso oficial. |
-| `src/components/Calculator/DistributionCalculator.tsx` | `/src/components/Calculator/DistributionCalculator.tsx` | Calculadora interactiva completa para las 8 distribuciones con visualizador gráfico SVG de funciones de masa/densidad, región de resultados `aria-live="polite"` y selector de 1 clic para los 10 ejercicios verificados del curso. |
+| `src/components/Calculator/DistributionCalculator.tsx` | `/src/components/Calculator/DistributionCalculator.tsx` | Calculadora interactiva completa para las 8 distribuciones con visualizador gráfico SVG de funciones de masa/densidad y región de resultados accesibles (`aria-live="polite"`). |
 | `src/components/Library/LibraryView.tsx` | `/src/components/Library/LibraryView.tsx` | Centro de recursos de estudio con detección automática de estado online/offline, botones para copiar código con confirmación táctil y reproductores de video bajo demanda. |
 | `src/components/Formulas/FormulasView.tsx` | `/src/components/Formulas/FormulasView.tsx` | Catálogo de fórmulas matemáticas KaTeX con pistas de uso, contraejemplos, reglas de aproximación exactas del curso y diseño optimizado para imprimir (`@media print`). |
 | `src/components/Progress/ProgressView.tsx` | `/src/components/Progress/ProgressView.tsx` | Panel de métricas personales, visualización de medallas por tema, bandeja activa de **Repaso del día** para reintentar problemas fallados y herramientas de exportación/importación JSON y SCORM. |
@@ -219,3 +222,12 @@ La plataforma ha sido auditada y adaptada para cumplir rigurosamente con los 4 p
 El proyecto ha sido validado con las herramientas del entorno de compilación:
 - **`tsc --noEmit` (Linter estático de TypeScript):** Aprobado con 0 errores de sintaxis y tipos rigurosamente definidos.
 - **`vite build` (Compilador de producción):** Generación exitosa de los paquetes de distribución optimizados con chunks limpios de código y estilos CSS procesados.
+
+## Pruebas automáticas
+
+`bun run test` (Vitest) ejecuta, entre otras:
+
+- **Motor de cálculo contra SciPy**, incluidos casos de n grande y gamma con α grande.
+- **Los 10 problemas verificados del curso** (`validateCourseBank`).
+- **Reglas de desbloqueo** y un recorrido completo del curso en orden.
+- **Integración de la app (jsdom)**: se resuelven por la interfaz las 4 etapas del tema 1, se comprueba que se desbloquea el tema 2 (y solo ese), la nota SCORM real, el `suspend_data` compacto, la persistencia y la reanudación desde un LMS simulado.

@@ -8,6 +8,11 @@ interface ActiveStageRunnerProps {
   stageId: StageId;
   onBackToRoadmap: () => void;
   onStageFinished: (isSuccess: boolean) => void;
+  /** Mensaje tras aprobar (p. ej. «Se desbloqueó el tema 2»). */
+  continueMessage?: string;
+  /** Texto y acción del botón principal tras aprobar la etapa. */
+  continueLabel?: string;
+  onContinue?: () => void;
   onOpenVideo?: () => void;
   onOpenCalculator?: () => void;
 }
@@ -17,6 +22,9 @@ export const ActiveStageRunner: React.FC<ActiveStageRunnerProps> = ({
   stageId,
   onBackToRoadmap,
   onStageFinished,
+  continueMessage,
+  continueLabel,
+  onContinue,
   onOpenVideo,
   onOpenCalculator,
 }) => {
@@ -116,12 +124,29 @@ export const ActiveStageRunner: React.FC<ActiveStageRunnerProps> = ({
               Has demostrado el criterio de decisión requerido para esta etapa.
             </p>
           </div>
-          <div>
+          {continueMessage && (
+            <p role="status" className="text-sm font-semibold text-[#14663A] bg-[#E6F4EC] rounded-lg px-4 py-2.5">
+              {continueMessage}
+            </p>
+          )}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            {onContinue && continueLabel && (
+              <button
+                onClick={onContinue}
+                className="tactile-btn-primary py-3 px-8 rounded-xl font-bold text-sm shadow-sm"
+              >
+                {continueLabel}
+              </button>
+            )}
             <button
               onClick={onBackToRoadmap}
-              className="tactile-btn-primary py-3 px-8 rounded-xl font-bold text-sm shadow-sm"
+              className={
+                onContinue && continueLabel
+                  ? 'tactile-btn-secondary py-3 px-8 rounded-xl font-bold text-sm'
+                  : 'tactile-btn-primary py-3 px-8 rounded-xl font-bold text-sm shadow-sm'
+              }
             >
-              Continuar en la Ruta
+              {onContinue && continueLabel ? 'Volver a la Ruta' : 'Continuar en la Ruta'}
             </button>
           </div>
         </div>

@@ -9,11 +9,9 @@ import {
   exponential,
   gammaDist,
   normal,
-  validateCourseBank,
-  CourseExerciseValidation,
 } from '../../calc/distributions';
 import { MathView } from '../MathView';
-import { Calculator as CalcIcon, CheckCircle2, BookmarkCheck, BarChart3, HelpCircle } from 'lucide-react';
+import { Calculator as CalcIcon, BarChart3 } from 'lucide-react';
 
 interface Props {
   initialTopic?: TopicId;
@@ -64,77 +62,6 @@ export const DistributionCalculator: React.FC<Props> = ({ initialTopic = 'binomi
   const [normA, setNormA] = useState<number>(9.97);
   const [normB, setNormB] = useState<number>(10.06);
 
-  // Course bank validations test results
-  const courseBankResults: CourseExerciseValidation[] = useMemo(() => {
-    return validateCourseBank();
-  }, []);
-
-  // Quick load of verified exercise
-  const loadVerifiedExercise = (testId: number) => {
-    switch (testId) {
-      case 1: // Exponencial
-        setSelectedTopic('exponencial');
-        setExpLambda(1 / 3);
-        setExpX(5);
-        break;
-      case 2: // Binomial
-        setSelectedTopic('binomial');
-        setBinN(6);
-        setBinP(0.75);
-        setBinX(4);
-        break;
-      case 3: // Hipergeométrica
-        setSelectedTopic('hipergeometrica');
-        setHypN(20);
-        setHypM(5);
-        setHypSampleN(4);
-        setHypX(2);
-        break;
-      case 4: // Poisson
-        setSelectedTopic('poisson');
-        setPoiLambda(2);
-        setPoiT(2);
-        setPoiX(3);
-        break;
-      case 5: // Normal
-        setSelectedTopic('normal');
-        setNormMu(10.0);
-        setNormSigma(0.03);
-        setNormA(9.97);
-        setNormB(10.06);
-        break;
-      case 6: // Binomial a Normal
-        setSelectedTopic('normal');
-        setNormMu(25.0);
-        setNormSigma(Math.sqrt(18.75));
-        setNormA(29.5);
-        setNormB(50);
-        break;
-      case 7: // Geométrica
-        setSelectedTopic('geometrica-nb');
-        setGeomP(0.2);
-        setGeomX(5);
-        break;
-      case 8: // Binomial Negativa
-        setSelectedTopic('geometrica-nb');
-        setNbR(4);
-        setNbP(0.6);
-        setNbX(3);
-        break;
-      case 9: // Gamma
-        setSelectedTopic('gamma');
-        setGamAlpha(3);
-        setGamBeta(2);
-        setGamX(6);
-        break;
-      case 10: // Binomial a Poisson
-        setSelectedTopic('poisson');
-        setPoiLambda(2);
-        setPoiT(2);
-        setPoiX(3);
-        break;
-    }
-  };
 
   // Calculations per topic
   const calcOutput = useMemo(() => {
@@ -305,7 +232,7 @@ export const DistributionCalculator: React.FC<Props> = ({ initialTopic = 'binomi
       </div>
 
       {/* Model Selector Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-[#8A14281A]">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-transparent no-scrollbar">
         {[
           { id: 'binomial', label: '1. Binomial' },
           { id: 'hipergeometrica', label: '2. Hipergeométrica' },
@@ -860,52 +787,6 @@ export const DistributionCalculator: React.FC<Props> = ({ initialTopic = 'binomi
         </div>
       </div>
 
-      {/* Course Verified Bank Tests (Sección 9) */}
-      <div className="surface-card p-6 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#8A14281A] pb-3">
-          <div>
-            <h3 className="text-lg font-bold text-[#8A1428] flex items-center gap-2">
-              <BookmarkCheck className="w-5 h-5 text-[#FF051E]" />
-              Banco de 10 Ejercicios Verificados del Curso (Sección 9)
-            </h3>
-            <p className="text-xs text-[#584141]">
-              Verificación matemática en tiempo real del motor estadístico contra el material del profesor.
-            </p>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs text-[#2ECC71] font-semibold bg-[#2ECC7115] px-2.5 py-1 rounded-full w-fit">
-            <CheckCircle2 className="w-4 h-4" />
-            10/10 Validados (±0.0005 a ±0.002)
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-          {courseBankResults.map((t) => (
-            <div
-              key={t.id}
-              className="p-3 bg-[#FBF5EC] rounded-lg border border-[#8A142815] flex items-center justify-between hover:border-[#8A142840] transition-colors"
-            >
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-2">
-                  <span className="font-bold text-xs text-[#8A1428]">#{t.id} {t.tema}</span>
-                  <span className="text-[10px] bg-[#2ECC7120] text-[#1e824c] px-1.5 rounded font-mono">
-                    ✓ Exacto
-                  </span>
-                </div>
-                <div className="text-xs text-[#584141]">{t.descripcion}</div>
-                <div className="text-[11px] text-[#8A1428] font-mono">
-                  Calculado: {t.valorCalculado} | Guía: {t.valorEsperado}
-                </div>
-              </div>
-              <button
-                onClick={() => loadVerifiedExercise(t.id)}
-                className="text-xs px-2.5 py-1.5 bg-white border border-[#8A142833] text-[#8A1428] hover:bg-[#8A142810] rounded font-medium shadow-sm transition-all whitespace-nowrap"
-              >
-                Cargar en Calc
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };
