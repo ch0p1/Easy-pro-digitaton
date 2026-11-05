@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAppStore } from './store/useStore';
 import { TOPICS_DATA } from './data/topics';
 import { TopicId, StageId, TopicData } from './types';
+import * as rules from './progress/rules';
 import { Navbar, MainViewTab } from './components/Navbar';
 import { TopicRoadmap } from './components/Playground/TopicRoadmap';
 import { ActiveStageRunner } from './components/Playground/ActiveStageRunner';
@@ -15,9 +16,8 @@ import { HomeView } from './components/Home/HomeView';
 import { ScormModal } from './components/Scorm/ScormModal';
 
 export default function App() {
-  const {
-    recordStageCompletion,
-  } = useAppStore();
+  const { state, recordStageCompletion, isTopicUnlocked, isStageUnlocked } = useAppStore();
+  const temas = state.temas;
 
   const [currentTab, setCurrentTab] = useState<MainViewTab>('home');
   const [activeStage, setActiveStage] = useState<{ topicId: TopicId; stageId: StageId } | null>(
@@ -28,9 +28,32 @@ export default function App() {
   const [showQuickDrill, setShowQuickDrill] = useState<boolean>(false);
   const [calculatorSelectedTopic, setCalculatorSelectedTopic] = useState<TopicId>('binomial');
   const [showScormModal, setShowScormModal] = useState<boolean>(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [focusTopic, setFocusTopic] = useState<TopicId | null>(null);
 
   // Stage activation
+  const topicLabel = (id: TopicId) => TOPICS_DATA.find((t) => t.id === id)?.nombre ?? id;
+
   const handleStartStage = (topicId: TopicId, stageId: StageId) => {
+    if (!isTopicUnlocked(topicId)) {
+      const blocker = rules.blockingTopic(temas, topicId);
+      setNotice(
+        blocker
+          ? `El tema «${topicLabel(topicId)}» está bloqueado: completa primero «${topicLabel(blocker)}».`
+          : `El tema «${topicLabel(topicId)}» está bloqueado.`
+      );
+      setFocusTopic(blocker);
+      setCurrentTab('playground');
+      return;
+    }
+    if (!isStageUnlocked(topicId, stageId)) {
+      const prev = rules.previousScoredStage(stageId);
+      const prevTitle = TOPICS_DATA.find((t) => t.id === topicId)?.etapas.find((e) => e.id === prev)?.titulo ?? 'la etapa anterior';
+      setNotice(`Esta etapa está bloqueada: aprueba primero «${prevTitle}».`);
+      return;
+    }
+    setNotice(null);
+    setFocusTopic(topicId);
     if (stageId === 'pistas') {
       const topic = TOPICS_DATA.find((t) => t.id === topicId);
       if (topic) {
@@ -52,6 +75,35 @@ export default function App() {
     if (!activeStage) return;
     recordStageCompletion(activeStage.topicId, activeStage.stageId, isSuccess);
   };
+
+  // Qué ofrecer al terminar una etapa: siguiente etapa, tema desbloqueado o fin del curso.
+  const continueInfo = (() => {
+    if (!activeStage) return null;
+    const { topicId, stageId } = activeStage;
+    if (!rules.isStageApproved(temas, topicId, stageId)) return null;
+    const next = rules.nextScoredStage(stageId);
+    if (next) {
+      const title = TOPICS_DATA.find((t) => t.id === topicId)?.etapas.find((e) => e.id === next)?.titulo ?? '';
+      return {
+        message: undefined as string | undefined,
+        label: `Siguiente etapa: ${title.split(':')[1]?.trim() || title}`,
+        action: () => setActiveStage({ topicId, stageId: next }),
+      };
+    }
+    if (!rules.isTopicCompleted(temas, topicId)) return null;
+    const nt = rules.nextTopic(topicId);
+    if (nt) {
+      return {
+        message: `¡Bloque completado! Se desbloqueó «${topicLabel(nt)}».`,
+        label: `Ir a «${topicLabel(nt)}»`,
+        action: () => {
+          setActiveStage(null);
+          setFocusTopic(nt);
+        },
+      };
+    }
+    return { message: '¡Curso completado! Aprobaste todos los bloques.', label: undefined, action: undefined };
+  })();
 
   const activeTopicData = activeStage
     ? TOPICS_DATA.find((t) => t.id === activeStage.topicId)
@@ -99,6 +151,10 @@ export default function App() {
           <>
             {!activeStage ? (
               <TopicRoadmap
+                progress={temas}
+                focusTopic={focusTopic}
+                notice={notice}
+                onDismissNotice={() => setNotice(null)}
                 onStartStage={handleStartStage}
                 onOpenDecisionTree={() => setShowDecisionTree(true)}
                 onOpenQuickDrill={() => setShowQuickDrill(true)}
@@ -106,10 +162,14 @@ export default function App() {
             ) : (
               activeTopicData && (
                 <ActiveStageRunner
+                  key={`${activeStage.topicId}-${activeStage.stageId}`}
                   topic={activeTopicData}
                   stageId={activeStage.stageId}
                   onBackToRoadmap={() => setActiveStage(null)}
                   onStageFinished={handleStageFinished}
+                  continueMessage={continueInfo?.message}
+                  continueLabel={continueInfo?.label}
+                  onContinue={continueInfo?.action}
                   onOpenVideo={() => {
                     setCurrentTab('library');
                   }}
@@ -155,10 +215,10 @@ export default function App() {
             setShowDecisionTree(false);
             setCurrentTab('calculator');
           }}
-          onGoToRoadmap={(topic) => {
+          onSelectTopic={(topic) => {
             setShowDecisionTree(false);
             setCurrentTab('playground');
-            setActiveStage({ topicId: topic, stageId: 'pistas' });
+            handleStartStage(topic, 'pistas');
           }}
         />
       )}
@@ -166,6 +226,7 @@ export default function App() {
       {/* Quick Drill Practice Modal */}
       {showQuickDrill && (
         <QuickDrillModal
+          unlockedCheck={isTopicUnlocked}
           onClose={() => setShowQuickDrill(false)}
           onOpenCalculator={() => {
             setShowQuickDrill(false);

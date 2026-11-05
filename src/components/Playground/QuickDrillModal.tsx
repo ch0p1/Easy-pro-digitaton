@@ -3,6 +3,7 @@ import { TOPICS_DATA } from '../../data/topics';
 import { Exercise, TopicId } from '../../types';
 import { ExerciseCard } from './ExerciseCard';
 import { Target, X, Shuffle, CheckCircle, RotateCcw } from 'lucide-react';
+import { shuffledOrder } from '../../utils/shuffle';
 
 interface QuickDrillModalProps {
   unlockedCheck?: (t: TopicId) => boolean;
@@ -11,6 +12,7 @@ interface QuickDrillModalProps {
 }
 
 export const QuickDrillModal: React.FC<QuickDrillModalProps> = ({
+  unlockedCheck,
   onClose,
   onOpenCalculator,
 }) => {
@@ -18,15 +20,17 @@ export const QuickDrillModal: React.FC<QuickDrillModalProps> = ({
   const availableExercises: Exercise[] = useMemo(() => {
     const list: Exercise[] = [];
     TOPICS_DATA.forEach((topic) => {
-      // Allow all exercises or only unlocked topics
+      // Solo temas ya desbloqueados (si no se indica la regla, se incluyen todos)
+      if (unlockedCheck && !unlockedCheck(topic.id)) return;
       topic.etapas.forEach((stage) => {
         if (stage.id === 'reconocer') {
           list.push(...stage.ejercicios);
         }
       });
     });
-    // Shuffle
-    return [...list].sort(() => Math.random() - 0.5);
+    // Mezcla uniforme (Fisher-Yates)
+    return shuffledOrder(list.length).map((i) => list[i]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);

@@ -55,7 +55,17 @@ export function combinations(n: number, k: number): number {
   return Math.round(Math.exp(logFactorial(n) - logFactorial(k) - logFactorial(n - k)));
 }
 
-// Error function (erf) con precisión de Chebyshev
+/** log C(n, k) en escala logarítmica: evita el desbordamiento de C(n, k) para n grande. */
+export function logCombinations(n: number, k: number): number {
+  if (k < 0 || k > n) return -Infinity;
+  if (k === 0 || k === n) return 0;
+  return logFactorial(n) - logFactorial(k) - logFactorial(n - k);
+}
+
+// Umbral desde el cual se calcula en escala logarítmica (por debajo, C(n,k) exacto y rápido).
+const LOG_SPACE_THRESHOLD = 30;
+
+// Función de error (erf): aproximación de Abramowitz & Stegun 7.1.26 (error absoluto máx. 1.5e-7)
 export function erf(x: number): number {
   // Constantes de aproximación de Abramowitz & Stegun (7.1.26)
   const a1 = 0.254829592;
@@ -74,6 +84,9 @@ export function erf(x: number): number {
   return sign * y;
 }
 
+// Tope de iteraciones: la convergencia requiere del orden de sqrt(a) términos (a grande => más).
+const MAX_GAMMA_ITER = 100000;
+
 // Función gamma incompleta regularizada P(a, x) = gamma(a, x) / Gamma(a)
 export function regularizedGammaP(a: number, x: number): number {
   if (x <= 0) return 0;
@@ -84,11 +97,11 @@ export function regularizedGammaP(a: number, x: number): number {
     let ap = a;
     let del = 1.0 / a;
     let sum = del;
-    for (let n = 1; n <= 100; n++) {
+    for (let n = 1; n <= MAX_GAMMA_ITER; n++) {
       ap += 1.0;
       del *= x / ap;
       sum += del;
-      if (Math.abs(del) < Math.abs(sum) * 1e-12) {
+      if (Math.abs(del) < Math.abs(sum) * 1e-15) {
         break;
       }
     }
@@ -99,7 +112,7 @@ export function regularizedGammaP(a: number, x: number): number {
     let c = 1.0 / 1e-30;
     let d = 1.0 / b;
     let h = d;
-    for (let i = 1; i <= 100; i++) {
+    for (let i = 1; i <= MAX_GAMMA_ITER; i++) {
       const an = -i * (i - a);
       b += 2.0;
       d = an * d + b;
@@ -109,7 +122,7 @@ export function regularizedGammaP(a: number, x: number): number {
       d = 1.0 / d;
       const del = d * c;
       h *= del;
-      if (Math.abs(del - 1.0) < 1e-12) {
+      if (Math.abs(del - 1.0) < 1e-15) {
         break;
       }
     }
@@ -124,7 +137,10 @@ export const binomial = {
     if (x < 0 || x > n || !Number.isInteger(x)) return 0;
     if (p === 0) return x === 0 ? 1 : 0;
     if (p === 1) return x === n ? 1 : 0;
-    return combinations(n, x) * Math.pow(p, x) * Math.pow(1 - p, n - x);
+    if (n < LOG_SPACE_THRESHOLD) {
+      return combinations(n, x) * Math.pow(p, x) * Math.pow(1 - p, n - x);
+    }
+    return Math.exp(logCombinations(n, x) + x * Math.log(p) + (n - x) * Math.log1p(-p));
   },
   cdf(x: number, n: number, p: number): number {
     if (x < 0) return 0;
@@ -149,9 +165,12 @@ export const hypergeometric = {
   pmf(x: number, n: number, M: number, N: number): number {
     if (x < 0 || x > n || !Number.isInteger(x)) return 0;
     if (x > M || n - x > N - M) return 0;
-    const num = combinations(M, x) * combinations(N - M, n - x);
-    const den = combinations(N, n);
-    return num / den;
+    if (N < LOG_SPACE_THRESHOLD) {
+      return (combinations(M, x) * combinations(N - M, n - x)) / combinations(N, n);
+    }
+    return Math.exp(
+      logCombinations(M, x) + logCombinations(N - M, n - x) - logCombinations(N, n)
+    );
   },
   cdf(x: number, n: number, M: number, N: number): number {
     const minX = Math.max(0, n - (N - M));
@@ -194,7 +213,11 @@ export const geometric = {
 export const negativeBinomial = {
   pmf(x: number, r: number, p: number): number {
     if (x < 0 || !Number.isInteger(x)) return 0;
-    return combinations(x + r - 1, r - 1) * Math.pow(p, r) * Math.pow(1 - p, x);
+    if (p === 1) return x === 0 ? 1 : 0;
+    if (x + r - 1 < LOG_SPACE_THRESHOLD) {
+      return combinations(x + r - 1, r - 1) * Math.pow(p, r) * Math.pow(1 - p, x);
+    }
+    return Math.exp(logCombinations(x + r - 1, r - 1) + r * Math.log(p) + x * Math.log1p(-p));
   },
   cdf(x: number, r: number, p: number): number {
     if (x < 0) return 0;
@@ -215,7 +238,8 @@ export const negativeBinomial = {
 // --- 5. Poisson p(x; mu) con mu = lambda * t ---
 export const poisson = {
   pmf(x: number, mu: number): number {
-    if (x < 0 || !Number.isInteger(x) || mu <= 0) return 0;
+    if (x < 0 || !Number.isInteger(x) || mu < 0) return 0;
+    if (mu === 0) return x === 0 ? 1 : 0;
     // Log-space para evitar overflow
     const logP = -mu + x * Math.log(mu) - logFactorial(x);
     return Math.exp(logP);

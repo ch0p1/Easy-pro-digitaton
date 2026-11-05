@@ -1,6 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { AppState, TopicId, StageId, RecordedError } from '../types';
 import { scorm12 } from '../scorm/scorm12';
+import * as rules from '../progress/rules';
+import {
+  SCORED_STAGES,
+  completionPercentage,
+  decodeSuspendData,
+  encodeSuspendData,
+} from '../scorm/progress';
 
 const STORAGE_KEY = 'easy_pro_academic_state_v1';
 const CURRENT_VERSION = 1;
@@ -8,7 +15,7 @@ const CURRENT_VERSION = 1;
 const INITIAL_TOPICS: TopicId[] = [
   'binomial',
   'hipergeometrica',
-  'geometrica',
+  'geometrica-nb',
   'poisson',
   'exponencial',
   'gamma',
@@ -49,40 +56,67 @@ function getInitialState(): AppState {
   };
 }
 
-function loadState(): AppState {
-  try {
-    // 1. Prioritize SCORM suspend_data if running inside an LMS
-    const lmsSuspendData = scorm12.getValue('cmi.suspend_data');
-    if (lmsSuspendData) {
-      try {
-        const parsedLms = JSON.parse(lmsSuspendData);
-        if (parsedLms && parsedLms.temas) {
-          return { ...getInitialState(), ...parsedLms, version: CURRENT_VERSION };
-        }
-      } catch (e) {
-        // Fallback to local storage
-      }
-    }
+/**
+ * Mezcla un estado guardado con el estado inicial. La mezcla es por tema, de modo que los
+ * temas añadidos en versiones nuevas aparecen aunque el usuario ya tuviera datos guardados.
+ */
+function mergeWithInitial(parsed: Partial<AppState> & { temas?: Record<string, any> }): AppState {
+  const initial = getInitialState();
+  const savedTemas: Record<string, any> = { ...(parsed.temas ?? {}) };
+  // Migración: versiones anteriores guardaban el tema 3 como 'geometrica'.
+  if (savedTemas['geometrica'] && !savedTemas['geometrica-nb']) {
+    savedTemas['geometrica-nb'] = savedTemas['geometrica'];
+  }
+  delete savedTemas['geometrica'];
+  return {
+    ...initial,
+    ...parsed,
+    temas: { ...initial.temas, ...savedTemas },
+    errores: Array.isArray(parsed.errores) ? parsed.errores : [],
+    version: CURRENT_VERSION,
+  };
+}
 
-    // 2. Local storage
+function loadState(): AppState {
+  let local: AppState | null = null;
+  try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return getInitialState();
-    const parsed = JSON.parse(raw);
-    if (parsed.version !== CURRENT_VERSION) {
-      const initial = getInitialState();
-      return { ...initial, ...parsed, version: CURRENT_VERSION };
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.temas) local = mergeWithInitial(parsed);
     }
-    return parsed;
   } catch (e) {
     console.warn('Error reading localStorage, using memory state:', e);
-    return getInitialState();
   }
+
+  // Si se ejecuta dentro de un LMS (SCORM), su progreso tiene prioridad.
+  try {
+    const lmsSuspendData = scorm12.getValue('cmi.suspend_data');
+    if (lmsSuspendData) {
+      const lmsTemas = decodeSuspendData(lmsSuspendData);
+      if (lmsTemas) {
+        return mergeWithInitial({ ...(local ?? {}), temas: lmsTemas as AppState['temas'] });
+      }
+      // Compatibilidad: formato anterior (estado completo en JSON).
+      const legacy = JSON.parse(lmsSuspendData);
+      if (legacy && legacy.temas) return mergeWithInitial(legacy);
+    }
+  } catch (e) {
+    // suspend_data ilegible: se usa localStorage
+  }
+
+  return local ?? getInitialState();
 }
 
 function saveState(state: AppState) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    scorm12.syncProgress(100, JSON.stringify(state));
+  } catch (e) {
+    console.warn('Error writing localStorage:', e);
+  }
+  try {
+    // Nota real y estado compacto (SCORM 1.2 limita suspend_data a 4096 caracteres).
+    scorm12.syncProgress(completionPercentage(state), encodeSuspendData(state));
   } catch (e) {
     console.warn('Error writing state:', e);
   }
@@ -112,6 +146,7 @@ export function useAppStore() {
           ...topic.etapas,
           [stageId]: updatedStage,
         };
+        const completado = SCORED_STAGES.every((s) => updatedEtapas[s]?.aprobada);
 
         return {
           ...prev,
@@ -119,6 +154,7 @@ export function useAppStore() {
             ...prev.temas,
             [topicId]: {
               ...topic,
+              completado,
               etapas: updatedEtapas,
             },
           },
@@ -142,14 +178,16 @@ export function useAppStore() {
     }));
   }, []);
 
-  // All topics and stages are fully accessible and unlocked
-  const isTopicUnlocked = useCallback((_topicId: TopicId): boolean => {
-    return true;
-  }, []);
+  // Desbloqueo secuencial: cada tema (y cada etapa) se abre al completar el anterior.
+  const isTopicUnlocked = useCallback(
+    (topicId: TopicId): boolean => rules.isTopicUnlocked(state.temas, topicId),
+    [state.temas]
+  );
 
-  const isStageUnlocked = useCallback((_topicId: TopicId, _stageId: StageId): boolean => {
-    return true;
-  }, []);
+  const isStageUnlocked = useCallback(
+    (topicId: TopicId, stageId: StageId): boolean => rules.isStageUnlocked(state.temas, topicId, stageId),
+    [state.temas]
+  );
 
   const exportStateJSON = useCallback(() => {
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(state, null, 2));
@@ -165,7 +203,7 @@ export function useAppStore() {
     try {
       const parsed = JSON.parse(jsonString);
       if (parsed && parsed.temas) {
-        setState({ ...parsed, version: CURRENT_VERSION });
+        setState(mergeWithInitial(parsed));
         return true;
       }
       return false;
