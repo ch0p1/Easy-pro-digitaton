@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
+import { useTheme } from '../hooks/useTheme';
+import { ThemeToggle } from './ThemeToggle';
 
 export type MainViewTab = 'home' | 'playground' | 'calculator' | 'library' | 'formulas';
 
@@ -13,6 +15,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onTabChange,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { mode, resolvedTheme, setMode } = useTheme();
 
   // Close mobile menu on Escape key press (WCAG 2.2)
   useEffect(() => {
@@ -53,27 +56,36 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header className="sticky top-0 z-40 bg-[#FBF5ECF0] backdrop-blur-md border-b border-transparent transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
-        {/* Mobile Hamburger Button (visible on mobile only: md:hidden) */}
-        <div className="flex items-center gap-3 md:hidden">
-          <button
-            type="button"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-expanded={isMenuOpen}
-            aria-controls="mobile-navigation-menu"
-            aria-label={isMenuOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
-            className="p-2.5 rounded-lg text-[#8A1428] hover:bg-[#8A142812] active:bg-[#8A142820] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center border border-[#8A142825] bg-[#FFFFFF]"
-          >
-            {isMenuOpen ? (
-              <X className="w-6 h-6 text-[#8A1428]" />
-            ) : (
-              <Menu className="w-6 h-6 text-[#8A1428]" />
-            )}
-          </button>
+        {/* Mobile Header: Hamburger + Title + Quick Theme Toggle */}
+        <div className="flex items-center justify-between w-full md:hidden">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-navigation-menu"
+              aria-label={isMenuOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
+              className="p-2.5 rounded-lg text-[#8A1428] hover:bg-[#8A142812] active:bg-[#8A142820] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center border border-[#8A142825] bg-[#FFFFFF]"
+            >
+              {isMenuOpen ? (
+                <X className="w-6 h-6 text-[#8A1428]" />
+              ) : (
+                <Menu className="w-6 h-6 text-[#8A1428]" />
+              )}
+            </button>
 
-          {/* Active section label indicator on mobile header */}
-          <span className="font-bold text-[#8A1428] text-lg tracking-tight truncate">
-            {navItems.find((item) => item.id === currentTab)?.label}
-          </span>
+            {/* Active section label indicator on mobile header */}
+            <span className="font-bold text-[#8A1428] text-lg tracking-tight truncate max-w-[190px]">
+              {navItems.find((item) => item.id === currentTab)?.label}
+            </span>
+          </div>
+
+          <ThemeToggle
+            mode={mode}
+            resolvedTheme={resolvedTheme}
+            setMode={setMode}
+            variant="mobile-header-button"
+          />
         </div>
 
         {/* Desktop Typographic Navigation Tabs (hidden on mobile: hidden md:flex) */}
@@ -104,9 +116,17 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </nav>
 
-        {/* Clean right brand tag */}
-        <div className="hidden sm:flex items-center text-xs font-semibold text-[#8A1428] bg-[#8A14280C] px-3 py-1 rounded-md border border-[#8A142815]">
-          <span>Devore 9.ª Ed.</span>
+        {/* Desktop Right Controls: ThemeToggle + Devore tag */}
+        <div className="hidden md:flex items-center gap-2.5">
+          <ThemeToggle
+            mode={mode}
+            resolvedTheme={resolvedTheme}
+            setMode={setMode}
+            variant="header"
+          />
+          <div className="hidden lg:flex items-center text-xs font-semibold text-[#8A1428] bg-[#8A14280C] px-3 py-1.5 rounded-md border border-[#8A142815]">
+            <span>Devore 9.ª Ed.</span>
+          </div>
         </div>
       </div>
 
@@ -148,6 +168,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </button>
                 );
               })}
+            </div>
+
+            {/* Theme selector in mobile drawer */}
+            <div className="p-3 bg-[#8A142806] border-t border-[#8A142815]">
+              <ThemeToggle
+                mode={mode}
+                resolvedTheme={resolvedTheme}
+                setMode={setMode}
+                variant="mobile-row"
+              />
             </div>
           </nav>
         </>

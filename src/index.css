@@ -146,3 +146,112 @@
   white-space: nowrap;
   border-width: 0;
 }
+
+/* =========================================================================
+   DARK THEME (Modo Oscuro Académico de Alto Contraste - WCAG 2.2 AAA)
+   ========================================================================= */
+
+html.dark {
+  color-scheme: dark;
+  --canvas: #121110;
+  --surface: #1B1917;
+  --primary-wine: #FF8596;
+  --secondary-burgundy: #FFA3B1;
+  --accent-crimson: #FF4D6A;
+  --accent-coral: #FF8A7A;
+  --text-primary: #F7F3EE;
+  --text-secondary: #C5BDB7;
+}
+
+html.dark body {
+  background-color: #121110 !important;
+  color: #F7F3EE !important;
+}
+
+/* Header de navegación en modo oscuro */
+html.dark header {
+  background-color: rgba(18, 17, 16, 0.92) !important;
+}
+
+/* Tarjetas y superficies */
+html.dark .surface-card {
+  background-color: #1B1917 !important;
+  border-color: rgba(255, 133, 150, 0.18) !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5) !important;
+}
+
+html.dark .surface-card-elevated {
+  background-color: #24211D !important;
+  border-color: rgba(255, 133, 150, 0.28) !important;
+  box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.7) !important;
+}
+
+html.dark .math-card {
+  background-color: #1B1917 !important;
+  border-left-color: #FF8596 !important;
+  border-top-color: rgba(255, 133, 150, 0.18) !important;
+  border-right-color: rgba(255, 133, 150, 0.18) !important;
+  border-bottom-color: rgba(255, 133, 150, 0.18) !important;
+}
+
+/* Modales y paneles emergentes */
+html.dark [role="dialog"] {
+  background-color: #24211D !important;
+  color: #F7F3EE !important;
+}
+
+/* Sobrescritura de utilidades con colores claros fijos */
+html.dark [class*="bg-[#FBF5EC]"] {
+  background-color: #161412 !important;
+}
+
+html.dark [class*="bg-[#FFFFFF]"],
+html.dark [class*="bg-white"] {
+  background-color: #1B1917 !important;
+}
+
+html.dark [class*="text-[#8A1428]"] {
+  color: #FF9EAC !important;
+}
+
+html.dark [class*="text-[#AC0B32]"] {
+  color: #FFB3BF !important;
+}
+
+html.dark [class*="text-[#1D1B16]"],
+html.dark [class*="text-[#1d1b16]"] {
+  color: #F7F3EE !important;
+}
+
+html.dark [class*="text-[#584141]"],
+html.dark [class*="text-[#3D2B2B]"] {
+  color: #C5BDB7 !important;
+}
+
+html.dark [class*="border-[#8A1428"] {
+  border-color: rgba(255, 158, 172, 0.24) !important;
+}
+
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background-color: #161412 !important;
+  color: #F7F3EE !important;
+  border-color: rgba(255, 158, 172, 0.35) !important;
+}
+
+html.dark .tactile-btn-secondary {
+  background-color: #24211D !important;
+  color: #FFB3BF !important;
+  border-color: #FF8596 !important;
+}
+
+html.dark :focus-visible {
+  outline: 2.5px solid #FF8596 !important;
+  outline-offset: 2.5px !important;
+}
+
+html.dark .katex {
+  color: #F7F3EE !important;
+}
+

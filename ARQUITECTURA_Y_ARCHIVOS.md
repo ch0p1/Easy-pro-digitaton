@@ -42,8 +42,12 @@ Este documento técnico detalla la estructura completa de archivos del proyecto 
     │   ├── scorm12.ts                   # Conector cliente oficial SCORM 1.2 (LMSInitialize, etc.)
     │   └── scormGenerator.ts            # Generador dinámico de paquetes SCORM 1.2 (.zip)
     │
+    ├── hooks/
+    │   └── useTheme.ts                  # Hook de tema (claro, oscuro, sistema automático y sincronización con SO)
+    │
     └── components/
         ├── Navbar.tsx                   # Barra de navegación adaptable (tabs en escritorio, menú hamburguesa accesible en celular)
+        ├── ThemeToggle.tsx              # Selector accesible de tema (Claro, Oscuro, Sistema)
         ├── MathView.tsx                 # Renderizador de fórmulas matemáticas KaTeX
         │
         ├── Home/
@@ -127,7 +131,8 @@ Este documento técnico detalla la estructura completa de archivos del proyecto 
 
 | Archivo | Ubicación | Propósito y Función |
 | :--- | :--- | :--- |
-| `src/components/Navbar.tsx` | `/src/components/Navbar.tsx` | Barra de navegación superior accesible con rol semántico `<nav aria-label="Navegación principal">`. Presenta pestañas tipográficas sin iconos distractores, subrayado de tinta activo para el elemento actual, métricas tabulares de racha y XP, y disparador del modal SCORM 1.2. |
+| `src/components/Navbar.tsx` | `/src/components/Navbar.tsx` | Barra de navegación superior accesible con rol semántico `<nav aria-label="Navegación principal">`. Presenta pestañas tipográficas sin iconos distractores, subrayado de tinta activo para el elemento actual, botón y selector de tema, y disparador del modal SCORM 1.2. |
+| `src/components/ThemeToggle.tsx` | `/src/components/ThemeToggle.tsx` | Control interactivo accesible para alternar entre modo Claro, modo Oscuro y reconocimiento automático del tema del Sistema operativo (con variante para barra de escritorio y menú móvil). |
 | `src/components/MathView.tsx` | `/src/components/MathView.tsx` | Componente seguro para renderizar fórmulas KaTeX en modo inline o bloque con degradación elegante si la biblioteca externa falla. |
 | `src/components/Home/HomeView.tsx` | `/src/components/Home/HomeView.tsx` | Página de bienvenida del sistema. Explica en detalle el objetivo del proyecto, el contenido y función de cada uno de los 5 módulos principales, el desglose de las 5 etapas por tema, los accesos directos de navegación y la matriz de los 8 temas de Devore. |
 | `src/components/Playground/TopicRoadmap.tsx` | `/src/components/Playground/TopicRoadmap.tsx` | Vista del mapa de ruta de aprendizaje. Muestra los 8 temas secuenciales con indicadores de estado (bloqueado, disponible, en curso, completado), barra de avance del curso y por tema, y las 5 etapas con candado hasta aprobar la anterior (texto + icono, no solo color). Recibe `progress` desde `App`. |
